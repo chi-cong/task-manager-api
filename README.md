@@ -36,9 +36,13 @@ rồi nhấn f5 hoặc chọn execute ![create-db](assets/readme-pics/create-db.
 > Để kiểm tra xem server đã được chạy trên nền tcp/ip chưa, chạy trên port nào, quay lại SSMS gõ lệnh SQL này vào phần query 4,5
 >
 > ```
-> SELECT client_net_address, local_net_address
+> SELECT DISTINCT local_tcp_port
 > FROM sys.dm_exec_connections
-> WHERE session_id = @@SPID;
+> WHERE local_tcp_port IS NOT NULL;
+> ```
+
+> ```
+>
 > ```
 
 10. Quay lại project vừa clone tạo một file .env ở vị trí ngoài cùng project rồi paste dòng này vào. Nếu port của localhost ở mục 8 khác thì có thể thay đổi theo
