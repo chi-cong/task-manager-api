@@ -3,6 +3,7 @@ const express = require("express"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
 
+require("dotenv").config()
 const app = express()
 
 const options = {
@@ -36,6 +37,9 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+
+//routes
+app.use("/user", require("./routes/userRouter.js"))
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT);

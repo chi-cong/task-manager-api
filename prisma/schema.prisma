@@ -9,16 +9,16 @@ datasource db {
 
 model User {
   id       Int       @id @default(autoincrement())
-  username String    @db.VarChar(30)
-  password String    @db.Char(30)
+  username String    @unique @db.VarChar(30)
+  password String    @db.VarChar(30)
   role     String    @db.VarChar(50)
   projects Project[]
-  task     Task[]
+  tasks    Task[]
 }
 
 model Manager {
   id          Int       @id @default(autoincrement())
-  managername String    @db.VarChar(30)
+  managername String    @unique @db.VarChar(30)
   password    String    @db.VarChar(30)
   role        String    @db.VarChar(50)
   projects    Project[]
@@ -29,8 +29,8 @@ model Project {
   name      String
   manager   Manager? @relation(fields: [managerId], references: [id])
   managerId Int?
-  user      User[]
-  task      Task[]
+  users     User[]
+  tasks     Task[]
 }
 
 model Task {
