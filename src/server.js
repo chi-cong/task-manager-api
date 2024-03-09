@@ -40,6 +40,7 @@ app.use(bodyParser.json());
 
 //routes
 app.use("/user", require("./routes/userRouter.js"))
+app.use("/manager", require("./routes/managerRouter.js"))
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT);

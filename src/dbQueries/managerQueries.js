@@ -2,16 +2,15 @@ const { PrismaClient, Prisma } = require("@prisma/client")
 
 const prisma = new PrismaClient()
 
-const createMananger = async (manangerName, password) => {
-  let mananger;
+const createManager = async (managerName, password) => {
+  let manager;
   try {
-    mananger = await prisma.mananger.create({
+    manager = await prisma.manager.create({
       data: {
-        manangerName,
+        managername: managerName,
         password,
         role: "",
-        projects: {},
-        tasks: {}
+        projects: {}
       }
     })
   } catch (e) {
@@ -20,15 +19,15 @@ const createMananger = async (manangerName, password) => {
     }
     return { errorCode: e }
   }
-  return mananger
+  return manager
 }
 
-const findManangerByName = async (manangerName) => {
-  let mananger;
+const findManagerByName = async (managerName) => {
+  let manager;
   try {
-    mananger = await prisma.mananger.findUnique({
+    manager = await prisma.manager.findUnique({
       where: {
-        manangerName
+        managerName
       }
     })
   } catch (e) {
@@ -37,21 +36,21 @@ const findManangerByName = async (manangerName) => {
     }
     return { errorCode: e }
   }
-  return mananger
+  return manager
 }
 
-const updateMananger = async (newMananger) => {
-  let updatedMananger
+const updateManager = async (newManager) => {
+  let updatedManager
   try {
-    updateMananger = await prisma.mananger.update({
+    updateManager = await prisma.manager.update({
       where: {
-        manangerName: newMananger.manangerName
+        managerName: newManager.managerName
       },
       data: {
-        role: newMananger.role,
-        password: newMananger.password,
-        projects: newMananger.project,
-        tasks: newMananger.task,
+        role: newManager.role,
+        password: newManager.password,
+        projects: newManager.project,
+        tasks: newManager.task,
       }
     })
   } catch (e) {
@@ -61,7 +60,7 @@ const updateMananger = async (newMananger) => {
     return { errorCode: e }
   }
 
-  return updatedMananger
+  return updatedManager
 }
 
-module.exports = { createMananger, findManangerByName, updateMananger }
+module.exports = { createManager, findManagerByName, updateManager }
