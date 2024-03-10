@@ -27,7 +27,7 @@ const findManagerByName = async (managerName) => {
   try {
     manager = await prisma.manager.findUnique({
       where: {
-        managerName
+        managername: managerName
       }
     })
   } catch (e) {
@@ -42,9 +42,9 @@ const findManagerByName = async (managerName) => {
 const updateManager = async (newManager) => {
   let updatedManager
   try {
-    updateManager = await prisma.manager.update({
+    updatedManager = await prisma.manager.update({
       where: {
-        managerName: newManager.managerName
+        managername: newManager.managername
       },
       data: {
         role: newManager.role,

@@ -17,6 +17,6 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ flag: false, data: {}, message: "token expired" })
   }
 
-  res.locals.userId = userId
+  res.locals.authId = userId
   next()
 }

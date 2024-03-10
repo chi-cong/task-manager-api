@@ -23,24 +23,24 @@ managerRouter.post("/sign-up", [], async (req, res) => {
     return await res.status(400).json({ flag: false, data: {}, message: `Failed! Error : ${manager.errorCode}` })
   }
 
-  return await res.status(201).json({ flag: true, data: { ...manager }, message: "New manager added" })
+  return await res.status(201).json({ flag: true, data: {}, message: "New manager added" })
 })
 
 managerRouter.post("/login", [], async (req, res) => {
-  const { managerName, password } = req.body
-  const manager = await findManagerByName(managerName)
+  const { managername, password } = req.body
+  const manager = await findManagerByName(managername)
 
   // common errors
   if (!manager) {
     return await res.status(404).json({ flag: false, data: {}, message: "Manager not founded" })
   }
-  if (await manager.password !== password) {
-    return await res.status(400).json({ flag: false, data: { ...manager }, message: "Incorrect password" })
+  if (await manager.password && manager.password !== password) {
+    return await res.status(400).json({ flag: false, data: {}, message: "Incorrect password" })
   }
 
   // uncommon errors
   if (await manager.errorCode) {
-    return res.status(500).json({ flag: false, data: { ...manager }, message: `Failed! Error : ${manager.errorCode}` })
+    return res.status(500).json({ flag: false, data: {}, message: `Failed! Error : ${manager.errorCode}` })
   }
 
   return await res.status(200).json({ flag: true, data: { tokenData: generateToken({ id: manager.id }) }, message: "Successful login" })
@@ -48,9 +48,9 @@ managerRouter.post("/login", [], async (req, res) => {
 
 managerRouter.post("/update", [authMiddleware], async (req, res) => {
   const updatedManager = req.body
-  const manager = await findManagerByName(updatedManager.managerName)
+  const manager = await findManagerByName(updatedManager.managername)
 
-  if (await manager.id !== res.locals.managerId) {
+  if (await manager.id !== res.locals.authId) {
     return await res.status(403).json({ flag: false, data: {}, message: "Incorrect manager id" })
   }
 

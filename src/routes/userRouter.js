@@ -50,7 +50,7 @@ userRouter.post("/update", [authMiddleware], async (req, res) => {
   const updatedUser = req.body
   const user = await findUserByName(updatedUser.username)
 
-  if (await user.id !== res.locals.userId) {
+  if (await user.id !== res.locals.authId) {
     return await res.status(403).json({ flag: false, data: {}, message: "Incorrect user id" })
   }
 
