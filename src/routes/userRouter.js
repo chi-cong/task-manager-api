@@ -1,3 +1,34 @@
+/**
+ * @swagger
+ * components:
+ * tags:
+ *  name: Users
+ *  description: Apis for user
+ * /sign-up:
+ *  post:
+ *    summary: create user account
+ *    tags: [Users]
+ *    response: 
+ *      201:
+ *        description: successful create new user
+ *        content:
+ *          application/json
+ *            schema:
+ *            type: object
+ *            properties:
+ *              type: object
+ *              properties:
+ *                flag:
+ *                  type: bool
+ *                  description: success request or not
+ *                  example: true
+ *                data:
+ *                  type: object
+ *                  description: returned data
+ *                message:
+ *                  type: string 
+ *                  description: usually response error details 
+**/
 const express = require("express")
 const { createUser, findUserByName, updateUser } = require("../dbQueries/userQueries")
 const { generateToken } = require("../utils/tokenHandler")
@@ -32,15 +63,15 @@ userRouter.post("/login", [], async (req, res) => {
 
   // common errors
   if (!user) {
-    return await res.status(404).json({ flag: false, data: {}, message: "User not founded" })
+    return await res.status(404).json({ flag: false, data: {}, message: "User was not found" })
   }
   if (await user.password !== password) {
-    return await res.status(400).json({ flag: false, data: { ...user }, message: "Incorrect password" })
+    return await res.status(400).json({ flag: false, data: {}, message: "Incorrect password" })
   }
 
   // uncommon errors
   if (await user.errorCode) {
-    return res.status(500).json({ flag: false, data: { ...user }, message: `Failed! Error : ${user.errorCode}` })
+    return res.status(500).json({ flag: false, data: {}, message: `Failed! Error : ${user.errorCode}` })
   }
 
   return await res.status(200).json({ flag: true, data: { tokenData: generateToken({ id: user.id }) }, message: "Successful login" })

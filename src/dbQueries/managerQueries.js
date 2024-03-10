@@ -1,4 +1,4 @@
-const { PrismaClient, Prisma } = require("@prisma/client")
+const { PrismaClient } = require("@prisma/client")
 
 const prisma = new PrismaClient()
 
@@ -38,6 +38,22 @@ const findManagerByName = async (managerName) => {
   }
   return manager
 }
+const findManagerById = async (id) => {
+  let manager;
+  try {
+    manager = await prisma.manager.findUnique({
+      where: {
+        id
+      }
+    })
+  } catch (e) {
+    if (e.code) {
+      return { errorCode: e.code }
+    }
+    return { errorCode: e }
+  }
+  return manager
+}
 
 const updateManager = async (newManager) => {
   let updatedManager
@@ -63,4 +79,4 @@ const updateManager = async (newManager) => {
   return updatedManager
 }
 
-module.exports = { createManager, findManagerByName, updateManager }
+module.exports = { createManager, findManagerByName, findManagerById, updateManager }

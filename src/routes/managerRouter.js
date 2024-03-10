@@ -10,7 +10,7 @@ managerRouter.post("/sign-up", [], async (req, res) => {
   const manager = await createManager(managerName, password)
 
   if (!manager) {
-    return res.status(500).json({ flag: false, data: { manager }, message: "Failed! Unknown error" })
+    return res.status(500).json({ flag: false, data: {}, message: "Failed! Unknown error" })
   }
 
   // common errors
@@ -32,7 +32,7 @@ managerRouter.post("/login", [], async (req, res) => {
 
   // common errors
   if (!manager) {
-    return await res.status(404).json({ flag: false, data: {}, message: "Manager not founded" })
+    return await res.status(404).json({ flag: false, data: {}, message: "Manager was not found" })
   }
   if (await manager.password && manager.password !== password) {
     return await res.status(400).json({ flag: false, data: {}, message: "Incorrect password" })
