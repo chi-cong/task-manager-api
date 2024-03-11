@@ -3,8 +3,8 @@ const express = require("express"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
 
-require("dotenv").config()
-const app = express()
+require("dotenv").config();
+const app = express();
 
 const options = {
   definition: {
@@ -12,8 +12,7 @@ const options = {
     info: {
       title: "Task Manager API",
       version: "0.1.0",
-      description:
-        "RESTful API For Task Manager App",
+      description: "RESTful API For Task Manager App",
     },
     servers: [
       {
@@ -39,8 +38,9 @@ app.use(
 app.use(bodyParser.json());
 
 //routes
-app.use("/user", require("./routes/userRouter.js"))
-app.use("/manager", require("./routes/managerRouter.js"))
+app.use("/user", require("./routes/userRouter.js"));
+app.use("/manager", require("./routes/managerRouter.js"));
+app.use("/project", require("./routes/projectRouter.js"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT);

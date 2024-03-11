@@ -1,5 +1,6 @@
-const { PrismaClient } = require("@prisma/client")
-const prisma = new PrismaClient()
+const { PrismaClient } = require("@prisma/client");
+const { parse } = require("dotenv");
+const prisma = new PrismaClient();
 
 const createProject = async (project, managerId) => {
   let newProject;
@@ -9,101 +10,106 @@ const createProject = async (project, managerId) => {
         name: project.name,
         manager: {
           connect: {
-            id: managerId
-          }
-        }
-      }
-    })
+            id: managerId,
+          },
+        },
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
   return newProject;
-}
+};
 
 const getProjectById = async (id) => {
-  let project
+  let project;
   try {
     project = await prisma.project.findUnique({
       where: {
-        id
-      }
-    })
+        id: parseInt(id),
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return project
-}
+  return project;
+};
 
 const getAllProjects = async () => {
-  let projects = []
+  let projects = [];
   try {
     projects = await prisma.project.findMany();
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return projects
-}
+  return projects;
+};
 
 const addProjectTask = async (projectId, task) => {
-  let project
+  let project;
   try {
     project = await prisma.project.update({
       where: {
-        id: projectId
+        id: projectId,
       },
       data: {
         tasks: {
           connectOrCreate: {
-            where: {
-              id: task.id
-            },
             create: {
-              ...task
-            }
-          }
-        }
-      }
-    })
+              ...task,
+            },
+            where: {
+              id: task.id,
+            },
+          },
+        },
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return project
-}
+  return project;
+};
 
 const addProjectUser = async (projectId, user) => {
-  let project
+  let project;
   try {
     project = await prisma.project.update({
       where: {
-        id: projectId
+        id: projectId,
       },
       data: {
         users: {
           connect: {
-            username: user.username
-          }
-        }
-      }
-    })
+            username: user.username,
+          },
+        },
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return project
-}
-module.exports = { createProject, getAllProjects, getProjectById, addProjectTask, addProjectUser }
-
+  return project;
+};
+module.exports = {
+  createProject,
+  getAllProjects,
+  getProjectById,
+  addProjectTask,
+  addProjectUser,
+};

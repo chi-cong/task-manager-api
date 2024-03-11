@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client")
+const { PrismaClient } = require("@prisma/client");
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const createManager = async (managerName, password) => {
   let manager;
@@ -10,73 +10,78 @@ const createManager = async (managerName, password) => {
         managername: managerName,
         password,
         role: "",
-        projects: {}
-      }
-    })
+        projects: {},
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return manager
-}
+  return manager;
+};
 
 const findManagerByName = async (managerName) => {
   let manager;
   try {
     manager = await prisma.manager.findUnique({
       where: {
-        managername: managerName
-      }
-    })
+        managername: managerName,
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return manager
-}
+  return manager;
+};
 const findManagerById = async (id) => {
   let manager;
   try {
     manager = await prisma.manager.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
-  return manager
-}
+  return manager;
+};
 
 const updateManager = async (newManager) => {
-  let updatedManager
+  let updatedManager;
   try {
     updatedManager = await prisma.manager.update({
       where: {
-        managername: newManager.managername
+        managername: newManager.managername,
       },
       data: {
         role: newManager.role,
         password: newManager.password,
         projects: newManager.project,
         tasks: newManager.task,
-      }
-    })
+      },
+    });
   } catch (e) {
     if (e.code) {
-      return { errorCode: e.code }
+      return { errorCode: e.code };
     }
-    return { errorCode: e }
+    return { errorCode: e };
   }
 
-  return updatedManager
-}
+  return updatedManager;
+};
 
-module.exports = { createManager, findManagerByName, findManagerById, updateManager }
+module.exports = {
+  createManager,
+  findManagerByName,
+  findManagerById,
+  updateManager,
+};
