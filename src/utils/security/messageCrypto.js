@@ -1,4 +1,3 @@
-const { log } = require("console");
 const { pbkdf2Sync, randomBytes } = require("crypto");
 
 const generateSalt = () => {
