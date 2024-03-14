@@ -8,38 +8,64 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  username String    @unique @db.VarChar(30)
-  password String    @db.VarChar(30)
-  role     String    @db.VarChar(50)
-  projects Project[]
-  tasks    Task[]
+  id              Int        @id @default(autoincrement())
+  username        String     @unique @db.VarChar(30)
+  password        String
+  salt            String
+  creatorId       Int?       @unique
+  creator         User?      @relation("Creation", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction) // user thuc hien tao tai khan
+  createdUser     User[]     @relation("Creation") // cac user khac duoc user nay khoi tao
+  role            UserRole?  @relation(fields: [roleId], references: [id])
+  tasks           Task[]     @relation("UsersOnTask")
+  roleId          Int?
+  managingProject Project[]  @relation("Managers")
+  project         Project[]  @relation("Users")
+  userTask        UserTask[]
 }
 
-model Manager {
-  id          Int       @id @default(autoincrement())
-  managername String    @unique @db.VarChar(30)
-  password    String    @db.VarChar(30)
-  role        String    @db.VarChar(50)
-  projects    Project[]
+model UserRole {
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  group        String
+  user         User[]
+  permission   Permission? @relation(fields: [permissionId], references: [id])
+  permissionId Int?
 }
 
 model Project {
-  id        Int      @id @default(autoincrement())
-  name      String
-  manager   Manager? @relation(fields: [managerId], references: [id])
-  managerId Int?
-  users     User[]
-  tasks     Task[]
+  id       Int    @id @default(autoincrement())
+  name     String
+  managers User[] @relation("Managers")
+  users    User[] @relation("Users")
+  tasks    Task[]
 }
 
 model Task {
-  id         Int      @id @default(autoincrement())
-  project    Project? @relation(fields: [projectId], references: [id])
-  projectId  Int?
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  taskDetail String
-  start      DateTime
-  deadline   DateTime
+  id              Int        @id @default(autoincrement())
+  project         Project    @relation(fields: [projectId], references: [id])
+  projectId       Int
+  usersOnTask     User[]     @relation("UsersOnTask")
+  taskDescription String
+  start           DateTime
+  deadline        DateTime
+  finished        Boolean
+  userTask        UserTask[]
+}
+
+model UserTask {
+  id           Int      @id @default(autoincrement())
+  parentTask   Task     @relation(fields: [taskId], references: [id])
+  taskId       Int
+  taskDetail   String
+  start        DateTime
+  deadline     DateTime
+  finished     Boolean
+  assignedUser User     @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+model Permission {
+  id    Int        @id @default(autoincrement())
+  route String     @unique
+  role  UserRole[]
 }
