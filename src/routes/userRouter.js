@@ -35,7 +35,7 @@ const {
   findUserByName,
   updateUser,
 } = require("../dbQueries/userQueries");
-const { generateToken } = require("../utils/tokenHandler");
+const { generateToken } = require("../utils/security/tokenHandler");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const userRouter = express.Router();

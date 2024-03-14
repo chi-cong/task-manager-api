@@ -13,8 +13,8 @@ model User {
   password        String
   salt            String
   creatorId       Int?       @unique
-  creator         User?      @relation("Creation", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction) // user thuc hien tao tai khan
-  createdUser     User[]     @relation("Creation") // cac user khac duoc user nay khoi tao
+  creator         User?      @relation("Creation", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdUser     User[]     @relation("Creation")
   role            UserRole?  @relation(fields: [roleId], references: [id])
   tasks           Task[]     @relation("UsersOnTask")
   roleId          Int?

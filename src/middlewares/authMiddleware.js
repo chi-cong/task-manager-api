@@ -1,4 +1,4 @@
-const { decryptToken } = require("../utils/tokenHandler");
+const { decryptToken } = require("../utils/security/tokenHandler");
 
 module.exports = (req, res, next) => {
   const authToken = req.headers.bearer;
