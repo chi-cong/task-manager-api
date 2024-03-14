@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 
 const createProject = async (project, managerId) => {
