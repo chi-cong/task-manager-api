@@ -1,8 +1,8 @@
 const express = require("express"),
   bodyParser = require("body-parser"),
   swaggerJsdoc = require("swagger-jsdoc"),
-  swaggerUi = require("swagger-ui-express");
-
+  swaggerUi = require("swagger-ui-express"),
+  swaggerDoc = require("./docs/swagger/ApiDoc.json");
 require("dotenv").config();
 const app = express();
 
@@ -19,15 +19,24 @@ const options = {
         url: "http://localhost:3000",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
-  apis: ["./routes/*.js"],
+  apis: [`./src/routes/userRouter.js`],
 };
 
-const swaggerSpecs = swaggerJsdoc(options);
+// const swaggerSpecs = swaggerJsdoc(options);
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpecs, { explorer: true })
+  swaggerUi.setup(swaggerDoc, { explorer: true })
 );
 
 app.use(
@@ -38,7 +47,7 @@ app.use(
 app.use(bodyParser.json());
 
 //routes
-// app.use("/user", require("./routes/userRouter.js"));
+app.use("/user", require("./routes/userRouter.js"));
 // app.use("/project", require("./routes/projectRouter.js"));
 app.use("/user-role", require("./routes/userRoleRouter.js"));
 

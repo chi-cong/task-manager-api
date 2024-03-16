@@ -1,4 +1,4 @@
-const resMap = async ({ res, data, successMessage, isReturnData }) => {
+const resMap = async ({ res, data, successMessage, returnData, callback }) => {
   if (!data) {
     return await res.status(404).json({
       flag: false,
@@ -6,6 +6,7 @@ const resMap = async ({ res, data, successMessage, isReturnData }) => {
       message: `Data doesn't exist or unknown error`,
     });
   }
+
   if (await data.errorCode) {
     return await res.status(400).json({
       flag: false,
@@ -14,9 +15,13 @@ const resMap = async ({ res, data, successMessage, isReturnData }) => {
     });
   }
 
+  if (callback) {
+    callback();
+  }
+
   return await res.status(200).json({
     flag: true,
-    data: isReturnData ? data : {},
+    data: returnData,
     message: `Succesful request! ${successMessage ? successMessage : ""}`,
   });
 };

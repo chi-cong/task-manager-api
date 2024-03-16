@@ -1,34 +1,9 @@
 /**
  * @swagger
- * components:
  * tags:
- *  name: Users
- *  description: Apis for user
- * /sign-up:
- *  post:
- *    summary: create user account
- *    tags: [Users]
- *    response:
- *      201:
- *        description: successful create new user
- *        content:
- *          application/json
- *            schema:
- *            type: object
- *            properties:
- *              type: object
- *              properties:
- *                flag:
- *                  type: bool
- *                  description: success request or not
- *                  example: true
- *                data:
- *                  type: object
- *                  description: returned data
- *                message:
- *                  type: string
- *                  description: usually response error details
- **/
+ *  name: User
+ *  description: user's API
+ */
 const express = require("express");
 const {
   createUser,
@@ -36,70 +11,76 @@ const {
   updateUser,
 } = require("../dbQueries/userQueries");
 const { generateToken } = require("../utils/security/tokenHandler");
+const { resMap } = require("../utils/maps/responseMap");
+const {
+  generateSalt,
+  hashPassword,
+  verifyPassword,
+} = require("../utils/security/messageCrypto");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const userRouter = express.Router();
 
-userRouter.post("/sign-up", [], async (req, res) => {
-  const { username, password } = req.body;
-  const user = await createUser(username, password);
+/**
+ * @openpi
+ * /create-user:
+ *  post:
+ *    security:
+ *      -bearerAuth: []
+ *    tags: [User]
+ *    responses:
+ *      200:
+ *        content:
+ *          application/json
+ *          schema:
+ *            type: object
+ *            properties:
+ *              flag:
+ *                type: boolean
+ *              data:
+ *                type: object
+ *              message:
+ *                type: string
+ */
+userRouter.post("/create-user", [authMiddleware], async (req, res) => {
+  const creator = res.locals.authId;
+  const { username, password, role } = req.body;
+  const salt = generateSalt();
+  const hashedPassword = hashPassword(password, salt);
+  const user = await createUser({
+    username,
+    password: hashedPassword,
+    salt,
+    role,
+    creator,
+  });
 
-  if (!user) {
-    return res
-      .status(500)
-      .json({ flag: false, data: { user }, message: "Failed! Unknown error" });
-  }
-
-  // common errors
-  if ((await user.errorCode) === "P2002") {
-    return await res
-      .status(400)
-      .json({ flag: false, data: {}, message: "Existed username" });
-  }
-
-  // uncommon errors
-  if (await user.errorCode) {
-    return await res.status(400).json({
-      flag: false,
-      data: {},
-      message: `Failed! Error : ${user.errorCode}`,
-    });
-  }
-
-  return await res
-    .status(201)
-    .json({ flag: true, data: { ...user }, message: "New user added" });
+  return await resMap({
+    res,
+    data: user,
+    successMessage: "New user created.",
+    returnData: {},
+  });
 });
 
 userRouter.post("/login", [], async (req, res) => {
   const { username, password } = req.body;
   const user = await findUserByName(username);
 
-  // common errors
-  if (!user) {
-    return await res
-      .status(404)
-      .json({ flag: false, data: {}, message: "User was not found" });
-  }
-  if ((await user.password) !== password) {
-    return await res
-      .status(400)
-      .json({ flag: false, data: {}, message: "Incorrect password" });
-  }
+  const checkPassword = async () => {
+    if (!verifyPassword(user.password, password, user.salt)) {
+      return await res
+        .status(400)
+        .json({ flag: false, data: {}, message: "Incorrect password" });
+    }
+  };
 
-  // uncommon errors
-  if (await user.errorCode) {
-    return res.status(500).json({
-      flag: false,
-      data: {},
-      message: `Failed! Error : ${user.errorCode}`,
-    });
-  }
-
-  return await res.status(200).json({
-    flag: true,
-    data: { tokenData: generateToken({ id: user.id }) },
-    message: "Successful login",
+  return await resMap({
+    res,
+    data: user,
+    successMessage: "New user created.",
+    returnData: generateToken({ id: user.id }),
+    callback: checkPassword,
   });
 });
 

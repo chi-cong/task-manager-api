@@ -16,4 +16,18 @@ const createNewUserRole = (newRoleData) => {
   return newRole;
 };
 
-module.exports = { createNewUserRole };
+const getUserRoleByName = (name) => {
+  let role;
+  try {
+    role = prisma.userRole.findUnique({
+      where: {
+        name: name,
+      },
+    });
+  } catch (e) {
+    return queryErrMap(e);
+  }
+  return role;
+};
+
+module.exports = { createNewUserRole, getUserRoleByName };

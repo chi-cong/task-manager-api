@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { queryErrMap } = require("../utils/maps/queryErrMap");
+const { getUserRoleByName } = require("./userRoleQueries");
 
 const prisma = new PrismaClient();
 let getAllUsersCursor = 0;
@@ -9,11 +10,10 @@ const createUser = async ({ username, password, salt, role, creator }) => {
   try {
     user = await prisma.user.create({
       data: {
-        username,
-        password,
-        salt,
-        role: role ? { connect: { name: role } } : null,
-        creator: creator ? { connect: { username: creator } } : null,
+        username: username,
+        password: password,
+        salt: salt,
+        creator: creator ? { connect: { id: creator } } : undefined,
       },
     });
   } catch (e) {
@@ -44,6 +44,14 @@ const getAllUsers = async () => {
       skip: 1,
       cursor: {
         id: getAllUsersCursor,
+      },
+      select: {
+        username: true,
+        tasks: true,
+        userTask: true,
+        project: true,
+        role: true,
+        creator: true,
       },
     });
     getAllUsersCursor = allUsers[9].id;
@@ -87,6 +95,68 @@ const updateUserPassword = async ({ username, password }) => {
   return updatedUser;
 };
 
+const addUserLargeTask = ({ username, taskId }) => {
+  let user;
+  try {
+    user = prisma.user.update({
+      where: {
+        username,
+      },
+      data: {
+        tasks: {
+          connect: {
+            id: taskId,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    return queryErrMap(e);
+  }
+  return user;
+};
+const addUserTask = ({ username, userTaskId }) => {
+  let user;
+  try {
+    user = prisma.user.update({
+      where: {
+        username,
+      },
+      data: {
+        userTask: {
+          connect: {
+            id: userTaskId,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    return queryErrMap(e);
+  }
+  return user;
+};
+
+const addUserProject = ({ username, projectId }) => {
+  let user;
+  try {
+    user = prisma.user.update({
+      where: {
+        username,
+      },
+      data: {
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    return queryErrMap(e);
+  }
+  return user;
+};
+
 const deleteUserByName = async (username) => {
   let deletedUser;
   try {
@@ -103,9 +173,15 @@ const deleteUserByName = async (username) => {
 
 module.exports = {
   createUser,
+
   findUserByName,
-  updateUserGeneral,
-  deleteUserByName,
-  updateUserPassword,
   getAllUsers,
+
+  updateUserGeneral,
+  updateUserPassword,
+  addUserTask,
+  addUserLargeTask,
+  addUserProject,
+
+  deleteUserByName,
 };

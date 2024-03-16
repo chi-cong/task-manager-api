@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Task Manager API",
+    "version": "0.1.0",
+    "description": "RESTful API For Task Manager App"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "User APIs"
+    }
+  ],
+  "paths": {
+    "/user/createUser": {
+      "post": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Add new user to database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "flag": {
+                      "type": "boolean",
+                      "description": "request fail or not"
+                    },
+                    "data": {},
+                    "message": {
+                      "type": "string",
+                      "description": "message to request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

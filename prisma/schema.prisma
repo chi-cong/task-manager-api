@@ -12,7 +12,7 @@ model User {
   username        String     @unique @db.VarChar(30)
   password        String
   salt            String
-  creatorId       Int?       @unique
+  creatorId       Int?
   creator         User?      @relation("Creation", fields: [creatorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   createdUser     User[]     @relation("Creation")
   role            UserRole?  @relation(fields: [roleId], references: [id])
