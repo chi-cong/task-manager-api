@@ -5,7 +5,7 @@ const { getUserRoleByName } = require("./userRoleQueries");
 const prisma = new PrismaClient();
 let getAllUsersCursor = 0;
 
-const createUser = async ({ username, password, salt, role, creator }) => {
+const createUser = async ({ username, password, salt, creator }) => {
   let user;
   try {
     user = await prisma.user.create({
@@ -28,6 +28,19 @@ const findUserByName = async (username) => {
     user = await prisma.user.findUnique({
       where: {
         username,
+      },
+    });
+  } catch (e) {
+    return queryErrMap(e);
+  }
+  return user;
+};
+const findUserById = async (id) => {
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        id,
       },
     });
   } catch (e) {
@@ -175,6 +188,7 @@ module.exports = {
   createUser,
 
   findUserByName,
+  findUserById,
   getAllUsers,
 
   updateUserGeneral,

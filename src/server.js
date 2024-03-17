@@ -5,32 +5,6 @@ const express = require("express"),
 require("dotenv").config();
 const app = express();
 
-const options = {
-  definition: {
-    openapi: "3.1.0",
-    info: {
-      title: "Task Manager API",
-      version: "0.1.0",
-      description: "RESTful API For Task Manager App",
-    },
-    servers: [
-      {
-        url: "http://localhost:3000",
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-  },
-  apis: [`./src/routes/userRouter.js`],
-};
-
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -48,6 +22,7 @@ app.use(bodyParser.json());
 app.use("/user", require("./routes/userRouter.js"));
 // app.use("/project", require("./routes/projectRouter.js"));
 app.use("/user-role", require("./routes/userRoleRouter.js"));
+app.use("/permis", require("./routes/permissionRoute"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT);

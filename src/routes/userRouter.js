@@ -2,7 +2,7 @@ const express = require("express");
 const {
   createUser,
   findUserByName,
-  updateUser,
+  updateUserGeneral,
 } = require("../dbQueries/userQueries");
 const { generateToken } = require("../utils/security/tokenHandler");
 const { resMap } = require("../utils/maps/responseMap");
@@ -52,7 +52,7 @@ userRouter.post("/login", [], async (req, res) => {
     res,
     data: user,
     successMessage: "",
-    returnData: generateToken({ id: user.id }),
+    returnData: generateToken({ id: user.id ? user.id : "" }),
     callback: checkPassword,
   });
 });
@@ -67,19 +67,14 @@ userRouter.post("/update", [authMiddleware], async (req, res) => {
       .json({ flag: false, data: {}, message: "Incorrect user id" });
   }
 
-  const updateResult = await updateUser(updatedUser);
+  const updateResult = await updateUserGeneral(updatedUser);
 
-  if (await updateResult.errorCode) {
-    return await res.status(500).json({
-      flag: false,
-      data: {},
-      message: `Failed! Error : ${updateResult.errorCode}`,
-    });
-  }
-
-  return await res
-    .status(200)
-    .json({ flag: true, data: {}, message: "User is updated !" });
+  return resMap({
+    res,
+    data: updateResult,
+    returnData: {},
+    successMessage: "User is updated",
+  });
 });
 
 module.exports = userRouter;

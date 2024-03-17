@@ -24,12 +24,11 @@ model User {
 }
 
 model UserRole {
-  id           Int         @id @default(autoincrement())
-  name         String      @unique
-  group        String
-  user         User[]
-  permission   Permission? @relation(fields: [permissionId], references: [id])
-  permissionId Int?
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  group      String
+  user       User[]
+  permission Permission[]
 }
 
 model Project {

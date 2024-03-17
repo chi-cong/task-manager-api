@@ -1,6 +1,8 @@
 const { decryptToken } = require("../utils/security/tokenHandler");
+const { findUserById } = require("../dbQueries/userQueries");
+const { checkPermission } = require("../dbQueries/permissonQueries");
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const authToken = req.headers.authorization;
   if (!authToken) {
     return res
@@ -17,9 +19,9 @@ module.exports = (req, res, next) => {
       .json({ flag: false, data: {}, message: "unauthorized request" });
   }
 
-  const userId = data.id;
-  if (!userId) {
-    return res
+  const user = await findUserById(data.id);
+  if (!user) {
+    return await res
       .status(401)
       .json({ flag: false, data: {}, message: "user not founded" });
   }
@@ -31,6 +33,21 @@ module.exports = (req, res, next) => {
       .json({ flag: false, data: {}, message: "token expired" });
   }
 
-  res.locals.authId = userId;
+  const queryRoute = req.baseUrl + req.path;
+  const permisResult = await checkPermission({
+    route: queryRoute,
+    group: user.roleId,
+  });
+
+  if (!permisResult) {
+    return await res.status(401).json({
+      flag: false,
+      data: {},
+      message:
+        "You don't have permission to access this resource. Contact users in charge",
+    });
+  }
+
+  res.locals.authId = user.id;
   next();
 };
