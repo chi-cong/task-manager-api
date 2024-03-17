@@ -12,10 +12,10 @@
   ],
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+      "idJWT": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
       }
     }
   },
@@ -26,9 +26,32 @@
     }
   ],
   "paths": {
-    "/user/createUser": {
+    "/user/create-user": {
       "post": {
+        "security": [
+          {
+            "idJWT": []
+          }
+        ],
         "tags": ["User"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Add new user to database",
@@ -41,7 +64,67 @@
                       "type": "boolean",
                       "description": "request fail or not"
                     },
-                    "data": {},
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "message to request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return JWT if login success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "flag": {
+                      "type": "boolean",
+                      "description": "request fail or not"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "description": "jwt token"
+                        },
+                        "exp": {
+                          "type": "integer",
+                          "description": "token expire date by seconds"
+                        }
+                      }
+                    },
                     "message": {
                       "type": "string",
                       "description": "message to request"

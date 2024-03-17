@@ -1,7 +1,7 @@
 const { decryptToken } = require("../utils/security/tokenHandler");
 
 module.exports = (req, res, next) => {
-  const authToken = req.headers.bearer;
+  const authToken = req.headers.authorization;
   if (!authToken) {
     return res
       .status(401)

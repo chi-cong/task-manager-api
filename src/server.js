@@ -1,6 +1,5 @@
 const express = require("express"),
   bodyParser = require("body-parser"),
-  swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express"),
   swaggerDoc = require("./docs/swagger/ApiDoc.json");
 require("dotenv").config();
@@ -32,7 +31,6 @@ const options = {
   apis: [`./src/routes/userRouter.js`],
 };
 
-// const swaggerSpecs = swaggerJsdoc(options);
 app.use(
   "/api-docs",
   swaggerUi.serve,

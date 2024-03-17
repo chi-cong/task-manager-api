@@ -1,9 +1,3 @@
-/**
- * @swagger
- * tags:
- *  name: User
- *  description: user's API
- */
 const express = require("express");
 const {
   createUser,
@@ -21,27 +15,6 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 const userRouter = express.Router();
 
-/**
- * @openpi
- * /create-user:
- *  post:
- *    security:
- *      -bearerAuth: []
- *    tags: [User]
- *    responses:
- *      200:
- *        content:
- *          application/json
- *          schema:
- *            type: object
- *            properties:
- *              flag:
- *                type: boolean
- *              data:
- *                type: object
- *              message:
- *                type: string
- */
 userRouter.post("/create-user", [authMiddleware], async (req, res) => {
   const creator = res.locals.authId;
   const { username, password, role } = req.body;
@@ -78,7 +51,7 @@ userRouter.post("/login", [], async (req, res) => {
   return await resMap({
     res,
     data: user,
-    successMessage: "New user created.",
+    successMessage: "",
     returnData: generateToken({ id: user.id }),
     callback: checkPassword,
   });
